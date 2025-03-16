@@ -5,7 +5,7 @@ import { maze1, maze2 } from "./input.js";
 const maze = maze2.split("\n").filter(row => Boolean(row)).map(row => row.split(" "))
 solve(maze);
 
-function solve(maze) {
+async function solve(maze) {
     // 1. process (process here means to run the same logic) unvisited neighbours.
     //  1.1. Unvisited neighbours, how to keep track of visited ones?
     //  sol: Store them somewhere (Set/Hashmap).
@@ -77,6 +77,7 @@ function solve(maze) {
 
         });
         render(maze, visited, currentCell, cellsToProcess);
+        await sleep(300);
     }
 }
 
@@ -127,4 +128,8 @@ function findStartCell(maze) {
 
 function isBlocked(cell) {
     return getCharacter(cell) === "#";
+}
+
+function sleep(ms) {
+    return new Promise(res => setTimeout(res, ms))
 }

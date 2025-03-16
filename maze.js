@@ -68,7 +68,6 @@ function createCell(character, visited) {
 function renderArray(array) {
     const div = document.getElementById("array");
     div.innerHTML = "";
-    console.log(array);
 
     array.forEach((element, i)=> {
         const cell = document.createElement("div")
