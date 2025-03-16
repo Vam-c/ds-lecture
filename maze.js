@@ -1,19 +1,17 @@
-export function render(maze) {
+export function render(maze, visited) {
     const div = document.getElementById("maze");
-
-    const rows = maze.split("\n").filter(row => Boolean(row));
+    div.innerHTML = "";
 
     // Assuming square mazes.
-    div.style.gridTemplateRows = `repeat(${rows.length}, 1fr)`;
-    div.style.gridTemplateColumns = `repeat(${rows.length}, 1fr)`;
+    div.style.gridTemplateRows = `repeat(${maze.length}, 1fr)`;
+    div.style.gridTemplateColumns = `repeat(${maze[0].length}, 1fr)`;
 
-    for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-        const cols = rows[rowIndex].split(" ");
-        for (let colIndex = 0; colIndex < cols.length; colIndex++) {
-            const cell = createCell(cols[colIndex])
-            div.appendChild(cell)
-        }
-    }
+    maze.forEach((row, rowIndex) =>
+        row.forEach((character, colIndex) => {
+            const cell = createCell(character, visited.has([rowIndex, colIndex].join(",")));
+            div.appendChild(cell);
+        })
+    )
 }
 
 // Maze elements:
@@ -24,14 +22,14 @@ export function render(maze) {
 // ^ -> finishing cell
 // ? -> cells waiting to be explored
 // * -> path taken to reach destination
-function createCell(character) {
+function createCell(character, visited) {
     const cell = document.createElement("div")
     cell.className = "cell";
 
-
     switch (character) {
         case '.':
-            cell.style.backgroundColor = "white";
+            if (visited) cell.style.backgroundColor = "yellow";
+            else cell.style.backgroundColor = "white";
             break;
         case '#':
             cell.style.backgroundColor = "gray";
@@ -41,9 +39,6 @@ function createCell(character) {
             break;
         case '^':
             cell.style.backgroundColor = "limegreen";
-            break;
-        case '?':
-            cell.style.backgroundColor = "yellow";
             break;
         case '*':
             cell.style.backgroundColor = "limegreen";
