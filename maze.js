@@ -1,4 +1,4 @@
-export function render(maze, visited) {
+export function render(maze, visitedCells, currentCell, cellsToProcess, parentMap = null) {
     const div = document.getElementById("maze");
     div.innerHTML = "";
 
@@ -8,19 +8,28 @@ export function render(maze, visited) {
 
     maze.forEach((row, rowIndex) =>
         row.forEach((character, colIndex) => {
-            const cell = createCell(character, visited.has([rowIndex, colIndex].join(",")));
+            // Override characters for special cells. Order matters.
+            cellsToProcess.forEach((cell, i) => {
+                if (cell[0] === rowIndex && cell[1] === colIndex) character = i;
+            });
+            if (rowIndex === currentCell[0] && colIndex === currentCell[1]) character = '@';
+
+            const cell = createCell(character, visitedCells.has([rowIndex, colIndex].join(",")));
             div.appendChild(cell);
         })
     )
+
+    renderArray(cellsToProcess);
 }
 
 // Maze elements:
 // 
 // . -> empty cell
-// # -> block
+// @ -> current cell
+// # -> blocked cell
 // $ -> starting cell
 // ^ -> finishing cell
-// ? -> cells waiting to be explored
+// ? -> cells waiting to be processed
 // * -> path taken to reach destination
 function createCell(character, visited) {
     const cell = document.createElement("div")
@@ -43,9 +52,31 @@ function createCell(character, visited) {
         case '*':
             cell.style.backgroundColor = "limegreen";
             break;
+        case '@':
+            cell.style.backgroundColor = "red";
+            break;
         default:
-            console.error("Invalid character");
+            cell.style.backgroundColor = "orange";
+            cell.innerText = character;
+            break;
     }
 
     return cell;
+}
+
+
+function renderArray(array) {
+    const div = document.getElementById("array");
+    div.innerHTML = "";
+    console.log(array);
+
+    array.forEach((element, i)=> {
+        const cell = document.createElement("div")
+        cell.className = "cell";
+        cell.style.backgroundColor = "lightblue";
+        cell.innerHTML = `
+        <strong>${i}</strong> <br/>
+        <span>${element}</span>`;
+        div.appendChild(cell);
+    });
 }

@@ -30,7 +30,7 @@ function solve(maze) {
         //      result: the first neighbour will be explored
         //      till its full depth until there are no paths remaining.
         //      DEPTH FIRST SEARCH.
-        const currentCell = cellsToProcess.pop();
+        const currentCell = cellsToProcess.shift();
 
         // Solution for backtracking the path from destination to start.
         parentCellMap[currentCell.join(",")] = previousCell;
@@ -38,10 +38,12 @@ function solve(maze) {
 
         // Mark this cell as visited/processed.
         visited.add(currentCell.join(",")); // NOTE Add debugger here to visualize.
-        render(maze, visited);
 
         // If this cell is the destination, we found the solution. Exit.
-        if (getCharacter(currentCell) == '^') return parentCellMap;
+        if (getCharacter(currentCell) == '^') {
+            render(maze, visited, currentCell, [], parentCellMap);
+            return;
+        }
 
         // Since the current cell is not the destination cell,
         // we need to process its neighbours (with the same logic, which is looped).
@@ -58,12 +60,23 @@ function solve(maze) {
         //       instead of looping through our input.
         //       
         //       1.2.2. Getting neighbours? just return the adjacent cells!
-        neighbours(currentCell).forEach(neighbour => {
+        getNeighbours(currentCell).forEach(neighbour => {
             // Maze specific conditions can be handled here. % can mean one way blocks
             // if we want them to be one way blocks :)
-            if (!isBlocked(neighbour) && !visited.has(neighbour.join(",")))
-                cellsToProcess.push(neighbour);
+            if (!isBlocked(neighbour) && !visited.has(neighbour.join(","))) {
+                // Also check if this neighbour is already being 
+                // considered for processing. Another edge case.
+                let considered = false;
+                cellsToProcess.forEach(cell => {
+                    if (cell[0] === neighbour[0] && cell[1] === neighbour[1])
+                        considered = true;
+                })
+
+                if (!considered) cellsToProcess.push(neighbour);
+            }
+
         });
+        render(maze, visited, currentCell, cellsToProcess);
     }
 }
 
@@ -75,13 +88,15 @@ function solve(maze) {
 //         (x-1, y)     (x, y)    (x+1, y)
 // 
 //                     (x, y+1) 
-function neighbours(cell) {
+function getNeighbours(cell) {
     const left = [cell[0] - 1, cell[1]];
     const right = [cell[0] + 1, cell[1]];
     const top = [cell[0], cell[1] - 1];
     const bottom = [cell[0], cell[1] + 1];
 
-    let cells = [left, right, top, bottom];
+    // NOTE change this to see different results.
+    // these are pushed i.e. return value will be reversed.
+    let cells = [top, right, bottom, left];
 
     let validCells = [];
 

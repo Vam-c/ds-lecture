@@ -1,6 +1,7 @@
 body {
     background-color: antiquewhite;
     font-family: fantasy;
+    margin: 0;
 }
 
 .cell {
@@ -9,10 +10,31 @@ body {
     border: 2px solid black;
 }
 
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    width: 100vw;
+    height: 100vh;
+}
+
 #maze {
     margin: auto;
     display: grid;
     background-color: black;
     height: 80vh;
     width: 80vh;
+}
+
+#array {
+    margin: auto;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+
+    height: 10vh;
+    width: 80vw;
 }
