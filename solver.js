@@ -1,8 +1,8 @@
 import { render } from "./maze.js";
-import { maze1, maze2 } from "./input.js";
+import { maze1, maze2, maze3, maze4 } from "./input.js";
 
 // Solution for 1.2.1
-const maze = maze2.split("\n").filter(row => Boolean(row)).map(row => row.split(" "))
+const maze = maze4.split("\n").filter(row => Boolean(row)).map(row => row.split(" "))
 solve(maze);
 
 async function solve(maze) {
@@ -30,6 +30,9 @@ async function solve(maze) {
         //      result: the first neighbour will be explored
         //      till its full depth until there are no paths remaining.
         //      DEPTH FIRST SEARCH.
+        //      
+        //      If we choose the cell which is the oldest one, we will
+        //      be BREADTH FIRST SEARCHing for the solution.
         const currentCell = cellsToProcess.shift();
 
         // Solution for backtracking the path from destination to start.
